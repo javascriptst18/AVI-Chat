@@ -7,7 +7,8 @@ import ChatAppComponent from "./components/ChatAppComponent";
 class App extends Component {
   state = {
     username: "",
-    currentScreen: "LoginScreen"
+    currentScreen: "LoginScreen",
+    btnName: "Google Log in"
   };
 
   componentDidMount() {
@@ -18,21 +19,43 @@ class App extends Component {
   auth = () => {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.setState({ username: user.displayName, currentScreen: "AVIchat" });
+        this.setState({
+          username: user.displayName,
+          currentScreen: "AVIchat",
+          btnName: "Log out"
+        });
       } else {
-        this.setState({ username: "" });
+        this.setState({
+          username: "",
+          currentScreen: "LoginScreen",
+          btnName: "Google Log in"
+        });
       }
     });
+  };
+
+  logOut = () => {
+    firebase.auth().signOut();
+  };
+
+  logIn = () => {
+    firebase.auth().signInWithPopup(googleProvider);
   };
 
   render() {
     // There is a logged in user = TRUE
     if (this.state.currentScreen === "AVIchat") {
-      return <ChatAppComponent />;
+      return (
+        <ChatAppComponent
+          btnName={this.state.btnName}
+          logOut={this.logOut}
+          username={this.state.username}
+        />
+      );
     }
     // There is a logged in user = FALSE
     if (this.state.currentScreen === "LoginScreen") {
-      return <LoginComponent />;
+      return <LoginComponent btnName={this.state.btnName} logIn={this.logIn} />;
     }
   }
 }

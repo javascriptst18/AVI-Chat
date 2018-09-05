@@ -2,7 +2,12 @@ import React, { Component } from "react";
 
 class ChatAppComponent extends Component {
   render() {
-    return <div>Here is the Chat AVI app !!!</div>;
+    return (
+      <div>
+        <p>HEJJJJJ</p>
+        <button onClick={this.props.logOut}>{this.props.btnName}</button>
+      </div>
+    );
   }
 }
 
