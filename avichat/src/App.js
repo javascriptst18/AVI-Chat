@@ -1,16 +1,21 @@
 import React, { Component } from "react";
 import "./App.css";
+// Import ChatAppComponent here
+// Import LoginComponent here
 
 class App extends Component {
+  state = {
+    // #1 state: current username
+    // #2 state: is user logged in?
+  };
+
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Welcome to AVIchat</h1>
-        </header>
-        <p className="App-intro">Alan, Igor, Vicente chat appen</p>
-      </div>
-    );
+    if ("is user logged in? = true") {
+      return <ChatAppComponent />;
+    }
+    if ("is user logged in? = false") {
+      return <LoginComponent />;
+    }
   }
 }
 
