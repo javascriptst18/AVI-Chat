@@ -1,12 +1,12 @@
 import firebase from "firebase";
 
 const config = {
-  apiKey: "AIzaSyD7zDOhyooQ6N6WvUSQPb4t6Dirtd83sTQ",
-  authDomain: "slackish-adb98.firebaseapp.com",
-  databaseURL: "https://slackish-adb98.firebaseio.com",
-  projectId: "slackish-adb98",
-  storageBucket: "slackish-adb98.appspot.com",
-  messagingSenderId: "990880907645"
+  apiKey: "AIzaSyBeV2dOmDqB0BL-CR7gc4tbs0mqx9XxPZ0",
+  authDomain: "avichat-fc64f.firebaseapp.com",
+  databaseURL: "https://avichat-fc64f.firebaseio.com",
+  projectId: "avichat-fc64f",
+  storageBucket: "avichat-fc64f.appspot.com",
+  messagingSenderId: "438157973620"
 };
 
 firebase.initializeApp(config);

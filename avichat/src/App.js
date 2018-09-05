@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import firebase, { favorites, googleProvider } from "./components/firebase";
 import "./App.css";
 import LoginComponent from "./components/LoginComponent";
-// Import ChatAppComponent here
+import ChatAppComponent from "./components/ChatAppComponent";
 
 class App extends Component {
   state = {
@@ -18,7 +18,7 @@ class App extends Component {
   auth = () => {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.setState({ username: this.state.username.displayName });
+        this.setState({ username: user.displayName, currentScreen: "AVIchat" });
       } else {
         this.setState({ username: "" });
       }
@@ -32,7 +32,7 @@ class App extends Component {
     }
     // There is a logged in user = FALSE
     if (this.state.currentScreen === "LoginScreen") {
-      return <LoginComponent username={this.state.username} />;
+      return <LoginComponent />;
     }
   }
 }
