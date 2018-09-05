@@ -1,14 +1,22 @@
 import React, { Component } from "react";
-import Login from "./Login";
+import firebase, { favorites, googleProvider } from "firebase";
 
 class LoginComponent extends Component {
-  render() {
-    state = {
-      // State that gets the value of the logged in user. Starts as an empy string
-    };
+  state = {
+    // State that gets the value of the logged in user. Starts as an empy string. This state was passed down from the App component
+    username: ""
+  };
 
-    return <div />;
-    // Click button here? Check firebase excercise
+  logIn = () => {
+    firebase.auth().signInWithPopup(googleProvider);
+  }
+
+  render() {
+    return (
+      <div>
+        <button {onClick=this.logIn}>Google Log In !</button>
+      </div>
+    );
   }
 }
 
