@@ -1,20 +1,61 @@
 import React, { Component } from "react";
+import firebase, { favorites, googleProvider } from "./components/firebase";
 import "./App.css";
-// Import ChatAppComponent here
-// Import LoginComponent here
+import LoginComponent from "./components/LoginComponent";
+import ChatAppComponent from "./components/ChatAppComponent";
 
 class App extends Component {
   state = {
-    // #1 state: current username
-    // #2 state: is user logged in?
+    username: "",
+    currentScreen: "LoginScreen",
+    btnName: "Google Log in"
+  };
+
+  componentDidMount() {
+    this.auth();
+  }
+
+  // Listening if anyone logs in. Saves the logged in user in state
+  auth = () => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.setState({
+          username: user.displayName,
+          currentScreen: "AVIchat",
+          btnName: "Log out"
+        });
+      } else {
+        this.setState({
+          username: "",
+          currentScreen: "LoginScreen",
+          btnName: "Google Log in"
+        });
+      }
+    });
+  };
+
+  logOut = () => {
+    firebase.auth().signOut();
+  };
+
+  logIn = () => {
+    firebase.auth().signInWithPopup(googleProvider);
   };
 
   render() {
-    if ("is user logged in? = true") {
-      return <ChatAppComponent />;
+    // There is a logged in user = TRUE
+    if (this.state.currentScreen === "AVIchat") {
+      return (
+        <ChatAppComponent
+          btnName={this.state.btnName}
+          logOut={this.logOut}
+          username={this.state.username}
+        />
+      );
     }
-    if ("is user logged in? = false") {
-      return <LoginComponent />;
+    // There is a logged in user = FALSE
+    if (this.state.currentScreen === "LoginScreen") {
+      return <LoginComponent btnName={this.state.btnName} logIn={this.logIn} />;
     }
   }
 }
