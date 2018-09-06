@@ -8,14 +8,26 @@ class ChatAppComponent extends Component {
     messages: []
   };
 
+  componentDidMount() {
+    firebase
+      .database()
+      .ref("messages/")
+      .on("value", snapshot => {
+        const currentMessages = snapshot.val();
+        if (currentMessages != null) {
+          this.setState({ messages: currentMessages });
+        }
+      });
+  }
+
   updateMessage = e => {
     this.setState({ message: e.target.value });
   };
 
-  submitMessage = e => {
+  submitMessage = value => {
     const nextMessage = {
       id: this.state.messages.length,
-      text: this.state.message
+      text: value
     };
 
     firebase
@@ -25,10 +37,16 @@ class ChatAppComponent extends Component {
   };
 
   render() {
+    const currentMessage = this.state.messages.map((message, i) => {
+      return <li key={message.id}>{message.text}</li>;
+    });
     return (
       <div>
         <h1>Welcome {this.props.username}</h1>
+        <ol>{currentMessage}</ol>
+        <br />
         <InputTextComponent
+          inputText={this.state.message}
           updateMessage={this.updateMessage}
           submitMessage={this.submitMessage}
         />
