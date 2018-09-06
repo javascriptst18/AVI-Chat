@@ -34,10 +34,12 @@ class App extends Component {
     });
   };
 
+  // We send this method down to the children ChatAppComponent
   logOut = () => {
     firebase.auth().signOut();
   };
 
+  // We send this method down to the children LoginComponent
   logIn = () => {
     firebase.auth().signInWithPopup(googleProvider);
   };
