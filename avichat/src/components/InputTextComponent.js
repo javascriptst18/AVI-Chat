@@ -6,6 +6,7 @@ class InputTextComponent extends Component {
     inputPlaceholder: "Write your message here and press enter"
   };
 
+  // Updates input state with text from input
   handleChange = e => {
     this.setState({ input: e.target.value });
   };

@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import InputTextComponent from "./InputTextComponent";
 import firebase, { favorites, googleProvider } from "./firebase";
+import MessageComponent from "./MessageComponent";
 
 class ChatAppComponent extends Component {
   state = {
-    message: "",
     messages: []
   };
 
@@ -20,14 +20,11 @@ class ChatAppComponent extends Component {
       });
   }
 
-  updateMessage = e => {
-    this.setState({ message: e.target.value });
-  };
-
   submitMessage = value => {
     const nextMessage = {
       id: this.state.messages.length,
       text: value
+      // tid: register the date/time everytime a message is created/sent
     };
 
     firebase
@@ -38,18 +35,14 @@ class ChatAppComponent extends Component {
 
   render() {
     const currentMessage = this.state.messages.map((message, i) => {
-      return <li key={message.id}>{message.text}</li>;
+      return <MessageComponent key={message.id} textvalue={message.text} />;
     });
     return (
       <div>
         <h1>Welcome {this.props.username}</h1>
         <ol>{currentMessage}</ol>
         <br />
-        <InputTextComponent
-          inputText={this.state.message}
-          updateMessage={this.updateMessage}
-          submitMessage={this.submitMessage}
-        />
+        <InputTextComponent submitMessage={this.submitMessage} />
         <br />
 
         <button onClick={this.props.logOut}>{this.props.btnName}</button>
