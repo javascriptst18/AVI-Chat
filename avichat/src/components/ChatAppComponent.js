@@ -20,11 +20,18 @@ class ChatAppComponent extends Component {
       });
   }
 
+  // Timestamp function that will be called everytime we submit a new message
+  getCurrentDate = () => {
+    const date = new Date().toLocaleDateString();
+    const time = new Date().toLocaleTimeString();
+    return `${date}, ${time}`;
+  };
+
   submitMessage = value => {
     const nextMessage = {
       id: this.state.messages.length,
-      text: value
-      // tid: register the date/time everytime a message is created/sent
+      text: value,
+      timestamp: this.getCurrentDate()
     };
 
     firebase
@@ -35,7 +42,13 @@ class ChatAppComponent extends Component {
 
   render() {
     const currentMessage = this.state.messages.map((message, i) => {
-      return <MessageComponent key={message.id} textvalue={message.text} />;
+      return (
+        <MessageComponent
+          key={message.id}
+          textvalue={message.text}
+          timestamp={message.timestamp}
+        />
+      );
     });
     return (
       <div>
