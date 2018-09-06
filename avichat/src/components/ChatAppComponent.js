@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import InputTextComponent from "./InputTextComponent";
 import firebase, { favorites, googleProvider } from "./firebase";
 
 class ChatAppComponent extends Component {
@@ -27,14 +28,10 @@ class ChatAppComponent extends Component {
     return (
       <div>
         <h1>Welcome {this.props.username}</h1>
-        <div>
-          <input
-            type="text"
-            placeholder="Write your message and press enter"
-            onChange={this.updateMessage}
-          />
-          <button onSubmit={this.submitMessage}>SEND</button>
-        </div>
+        <InputTextComponent
+          updateMessage={this.updateMessage}
+          submitMessage={this.submitMessage}
+        />
         <br />
 
         <button onClick={this.props.logOut}>{this.props.btnName}</button>
