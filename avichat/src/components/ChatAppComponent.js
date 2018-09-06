@@ -5,9 +5,14 @@ import MessageComponent from "./MessageComponent";
 
 class ChatAppComponent extends Component {
   state = {
-    messages: []
+    messages: [],
+    user: ""
   };
 
+  // Runs when app starts and/or when page loads
+  // "on" is to constantly listen to changes
+  // Here we listen on changes on the databas and update the state
+  // With the this.auth() we update our "user" state with the displayname of the logged in google account
   componentDidMount() {
     firebase
       .database()
@@ -18,6 +23,7 @@ class ChatAppComponent extends Component {
           this.setState({ messages: currentMessages });
         }
       });
+    this.auth();
   }
 
   // Timestamp function that will be called everytime we submit a new message
@@ -31,13 +37,20 @@ class ChatAppComponent extends Component {
     const nextMessage = {
       id: this.state.messages.length,
       text: value,
-      timestamp: this.getCurrentDate()
+      timestamp: this.getCurrentDate(),
+      sender: this.state.user
     };
 
     firebase
       .database()
-      .ref("messages/" + nextMessage.id)
+      .ref(`messages/${nextMessage.id}`)
       .set(nextMessage);
+  };
+
+  auth = () => {
+    firebase.auth().onAuthStateChanged(user => {
+      this.setState({ user: user.displayName });
+    });
   };
 
   render() {
@@ -47,6 +60,7 @@ class ChatAppComponent extends Component {
           key={message.id}
           textvalue={message.text}
           timestamp={message.timestamp}
+          getUser={this.state.user}
         />
       );
     });
