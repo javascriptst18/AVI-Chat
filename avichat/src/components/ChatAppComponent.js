@@ -60,7 +60,7 @@ class ChatAppComponent extends Component {
           key={message.id}
           textvalue={message.text}
           timestamp={message.timestamp}
-          getUser={this.state.user}
+          getUser={message.sender}
         />
       );
     });
