@@ -3,13 +3,19 @@ import React, { Component } from "react";
 // Om jag tar bort key={props.key} får jag inget varning i consolen längre
 
 function MessageComponent(props) {
+  // Only admin users can delete messages
+  const none = {
+    display: "none"
+  };
   let messageDelete;
-  if (props.getUser === "Vicente Tirado" || "Alan Habib" || "Igor Semiz") {
-    messageDelete = <button>Delete This Message</button>;
+  if (props.user === ("Vicente Tirado" || "Alan Habib" || "Igor Semiz")) {
+    messageDelete = <button>Delete this Message</button>;
+  } else {
+    messageDelete = <button style={none}>Nothing</button>;
   }
   return (
     <div>
-      <p key={props.key}>{props.getUser}</p>
+      <p key={props.key}>{props.getSender}</p>
       <p>{props.textvalue}</p>
       <p>{props.timestamp}</p>
       {messageDelete}

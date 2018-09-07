@@ -60,13 +60,14 @@ class ChatAppComponent extends Component {
           key={message.id}
           textvalue={message.text}
           timestamp={message.timestamp}
-          getUser={message.sender}
+          getSender={message.sender}
+          user={this.state.user}
         />
       );
     });
     return (
       <div>
-        <h1>Welcome {this.props.username}</h1>
+        <h1>Welcome {this.state.user}</h1>
         <ol>{currentMessage}</ol>
         <br />
         <InputTextComponent submitMessage={this.submitMessage} />
