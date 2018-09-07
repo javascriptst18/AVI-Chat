@@ -23,8 +23,12 @@ class InputTextComponent extends Component {
     });
   };
 
+  emptyWarning = () => {
+    alert("Empty input, please write something!");
+  };
+
   render() {
-    const { input } = this.state;
+    const { input } = this.state; // same as ==> const input = this.state.input;
     return (
       <div>
         <input
@@ -38,8 +42,12 @@ class InputTextComponent extends Component {
         <button
           type="submit"
           onClick={() => {
-            this.props.submitMessage(input);
-            this.setState({ input: "" });
+            if (this.state.input === "") {
+              this.emptyWarning();
+            } else {
+              this.props.submitMessage(input);
+              this.setState({ input: "" });
+            }
           }}
         >
           SEND
