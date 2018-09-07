@@ -23,6 +23,7 @@ class InputTextComponent extends Component {
     });
   };
 
+  // This function gets called everytime SEND is clicked and the input text is empty
   emptyWarning = () => {
     alert("Empty input, please write something!");
   };
