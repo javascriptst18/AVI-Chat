@@ -5,15 +5,14 @@ import MessageComponent from "./MessageComponent";
 
 class ChatAppComponent extends Component {
   state = {
-    messages: [],
-    user: ""
+    messages: []
   };
 
   // Runs when app starts and/or when page loads
   // "on" is to constantly listen to changes
   // Here we listen on changes on the databas and update the state
   // With the this.auth() we update our "user" state with the displayname of the logged in google account
-  componentDidMount() {
+  componentWillMount() {
     firebase
       .database()
       .ref("messages")
@@ -50,8 +49,6 @@ class ChatAppComponent extends Component {
 
         this.setState({ messages: currentMessages });
       });
-
-    this.auth();
   }
 
   // Timestamp function that will be called everytime we submit a new message
@@ -63,7 +60,7 @@ class ChatAppComponent extends Component {
 
   submitMessage = value => {
     const nextMessage = {
-      sender: this.state.user,
+      sender: this.props.user,
       timestamp: this.getCurrentDate(),
       uniquePostId: firebase.database.ServerValue.TIMESTAMP,
       text: value // argument passed in submitMessage function
@@ -75,23 +72,12 @@ class ChatAppComponent extends Component {
       .push(nextMessage);
   };
 
-  // Only if there is a logged in user then we update the state "user" with the displayName of the logged in google account
-  auth = () => {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.setState({ user: user.displayName });
-      }
-    });
-  };
-
   // This function gets called when the admin deletemessage is clicked. It deletes the message from the database
   deleteMessage = del => {
     firebase
       .database()
       .ref(`messages/${del}`)
       .remove();
-
-    console.log("test att deleta message");
   };
 
   currentMessage = messagesArray => {
@@ -101,7 +87,7 @@ class ChatAppComponent extends Component {
         textvalue={message.content.text}
         timestamp={message.content.timestamp}
         getSender={message.content.sender}
-        user={this.state.user}
+        user={this.props.user}
         deleteMessage={this.deleteMessage}
         keyDelete={message.id}
       />
@@ -111,7 +97,7 @@ class ChatAppComponent extends Component {
   render() {
     return (
       <div>
-        <h1>Welcome {this.state.user}</h1>
+        <h1>Welcome {this.props.user}</h1>
         <ol>{this.currentMessage(this.state.messages)}</ol>
         <br />
         <InputTextComponent submitMessage={this.submitMessage} />
