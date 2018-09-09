@@ -13,7 +13,7 @@ class ChatAppComponent extends Component {
   // "on" is to constantly listen to changes
   // Here we listen on changes on the databas and update the state
   // With the this.auth() we update our "user" state with the displayname of the logged in google account
-  componentWillMount() {
+  componentDidMount() {
     firebase
       .database()
       .ref("messages")
@@ -25,15 +25,30 @@ class ChatAppComponent extends Component {
         });
         this.setState({ messages: currentMessages });
       });
+    // VARFÖR OM MAN FILTRERAR SIDAN UPPDATERAS INTE !! MAN MÅSTE LADDA OM SIDAN FÖR ATT UPPDATERA ORDENTLIGT CHAT LISTAN
+    // firebase
+    //   .database()
+    //   .ref("messages")
+    //   .on("child_removed", snapshot => {
+    //     const removedMessage = snapshot.val();
+    //     const currentMessagesAfterRemove = this.state.messages.filter(item => {
+    //       return item.key !== removedMessage.key;
+    //     });
+    //     this.setState({ messages: currentMessagesAfterRemove });
+    //   });
+
     firebase
       .database()
       .ref("messages")
       .on("child_removed", snapshot => {
-        const removedMessage = snapshot.val();
-        const currentMessagesAfterRemove = this.state.messages.filter(item => {
-          return item.key !== removedMessage.key;
-        });
-        this.setState({ messages: currentMessagesAfterRemove });
+        let currentMessages = [...this.state.messages];
+        for (let i = 0; i < currentMessages.length; i++) {
+          if (currentMessages[i].id === snapshot.key) {
+            currentMessages.splice(i, 1);
+          }
+        }
+
+        this.setState({ messages: currentMessages });
       });
 
     this.auth();
@@ -60,9 +75,12 @@ class ChatAppComponent extends Component {
       .push(nextMessage);
   };
 
+  // Only if there is a logged in user then we update the state "user" with the displayName of the logged in google account
   auth = () => {
     firebase.auth().onAuthStateChanged(user => {
-      this.setState({ user: user.displayName });
+      if (user) {
+        this.setState({ user: user.displayName });
+      }
     });
   };
 
@@ -72,6 +90,7 @@ class ChatAppComponent extends Component {
       .database()
       .ref(`messages/${del}`)
       .remove();
+
     console.log("test att deleta message");
   };
 
