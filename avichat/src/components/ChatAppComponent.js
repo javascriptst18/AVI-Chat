@@ -13,18 +13,21 @@ class ChatAppComponent extends Component {
   // "on" is to constantly listen to changes
   // Here we listen on changes on the databas and update the state
   // With the this.auth() we update our "user" state with the displayname of the logged in google account
-  componentDidMount() {
+  componentWillMount() {
     firebase
       .database()
-      .ref("/messages")
+      .ref("messages")
       .on("child_added", snapshot => {
         const currentMessages = [...this.state.messages];
-        currentMessages.push(snapshot.val());
+        currentMessages.push({
+          content: snapshot.val(),
+          id: snapshot.key
+        });
         this.setState({ messages: currentMessages });
       });
     firebase
       .database()
-      .ref("/messages")
+      .ref("messages")
       .on("child_removed", snapshot => {
         const removedMessage = snapshot.val();
         const currentMessagesAfterRemove = this.state.messages.filter(item => {
@@ -53,7 +56,7 @@ class ChatAppComponent extends Component {
 
     firebase
       .database()
-      .ref(`/messages`)
+      .ref("messages")
       .push(nextMessage);
   };
 
@@ -67,20 +70,21 @@ class ChatAppComponent extends Component {
   deleteMessage = del => {
     firebase
       .database()
-      .ref(`/messages/${del}`) // del = message id som vi vill ta bort
+      .ref(`messages/${del}`)
       .remove();
-    console.log("test delete message button");
+    console.log("test att deleta message");
   };
 
   currentMessage = messagesArray => {
     return messagesArray.map(message => (
       <MessageComponent
-        key={message.uniquePostId}
-        textvalue={message.text}
-        timestamp={message.timestamp}
-        getSender={message.sender}
+        key={message.content.uniquePostId}
+        textvalue={message.content.text}
+        timestamp={message.content.timestamp}
+        getSender={message.content.sender}
         user={this.state.user}
         deleteMessage={this.deleteMessage}
+        keyDelete={message.id}
       />
     ));
   };

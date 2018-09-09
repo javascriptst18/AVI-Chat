@@ -12,7 +12,8 @@ function MessageComponent(props) {
     messageDelete = (
       <button
         onClick={() => {
-          // props.deleteMessage(props.key);
+          props.deleteMessage(props.keyDelete);
+          console.log(props.keyDelete);
         }}
       >
         Delete this Message
