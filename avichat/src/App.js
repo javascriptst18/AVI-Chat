@@ -20,13 +20,11 @@ class App extends Component {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.setState({
-          // username: user.displayName,
           currentScreen: "AVIchat",
           btnName: "Log out"
         });
       } else {
         this.setState({
-          // username: "",
           currentScreen: "LoginScreen",
           btnName: "Google Log in"
         });
@@ -48,11 +46,7 @@ class App extends Component {
     // There is a logged in user = TRUE
     if (this.state.currentScreen === "AVIchat") {
       return (
-        <ChatAppComponent
-          btnName={this.state.btnName}
-          logOut={this.logOut}
-          // username={this.state.username}
-        />
+        <ChatAppComponent btnName={this.state.btnName} logOut={this.logOut} />
       );
     }
     // There is a logged in user = FALSE

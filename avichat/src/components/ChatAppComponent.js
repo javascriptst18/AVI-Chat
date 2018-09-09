@@ -16,13 +16,23 @@ class ChatAppComponent extends Component {
   componentDidMount() {
     firebase
       .database()
-      .ref("messages/")
-      .on("value", snapshot => {
-        const currentMessages = snapshot.val();
-        if (currentMessages != null) {
-          this.setState({ messages: currentMessages });
-        }
+      .ref("/messages")
+      .on("child_added", snapshot => {
+        const currentMessages = [...this.state.messages];
+        currentMessages.push(snapshot.val());
+        this.setState({ messages: currentMessages });
       });
+    firebase
+      .database()
+      .ref("/messages")
+      .on("child_removed", snapshot => {
+        const removedMessage = snapshot.val();
+        const currentMessagesAfterRemove = this.state.messages.filter(item => {
+          return item.key !== removedMessage.key;
+        });
+        this.setState({ messages: currentMessagesAfterRemove });
+      });
+
     this.auth();
   }
 
@@ -35,16 +45,16 @@ class ChatAppComponent extends Component {
 
   submitMessage = value => {
     const nextMessage = {
-      id: this.state.messages.length,
-      text: value,
+      sender: this.state.user,
       timestamp: this.getCurrentDate(),
-      sender: this.state.user
+      uniquePostId: firebase.database.ServerValue.TIMESTAMP,
+      text: value // argument passed in submitMessage function
     };
 
     firebase
       .database()
-      .ref(`messages/${nextMessage.id}`)
-      .set(nextMessage);
+      .ref(`/messages`)
+      .push(nextMessage);
   };
 
   auth = () => {
@@ -53,22 +63,33 @@ class ChatAppComponent extends Component {
     });
   };
 
+  // This function gets called when the admin deletemessage is clicked. It deletes the message from the database
+  deleteMessage = del => {
+    firebase
+      .database()
+      .ref(`/messages/${del}`) // del = message id som vi vill ta bort
+      .remove();
+    console.log("test delete message button");
+  };
+
+  currentMessage = messagesArray => {
+    return messagesArray.map(message => (
+      <MessageComponent
+        key={message.uniquePostId}
+        textvalue={message.text}
+        timestamp={message.timestamp}
+        getSender={message.sender}
+        user={this.state.user}
+        deleteMessage={this.deleteMessage}
+      />
+    ));
+  };
+
   render() {
-    const currentMessage = this.state.messages.map((message, i) => {
-      return (
-        <MessageComponent
-          key={message.id}
-          textvalue={message.text}
-          timestamp={message.timestamp}
-          getSender={message.sender}
-          user={this.state.user}
-        />
-      );
-    });
     return (
       <div>
         <h1>Welcome {this.state.user}</h1>
-        <ol>{currentMessage}</ol>
+        <ol>{this.currentMessage(this.state.messages)}</ol>
         <br />
         <InputTextComponent submitMessage={this.submitMessage} />
         <br />

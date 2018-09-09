@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-// Om jag tar bort key={props.key} får jag inget varning i consolen längre
+// Om jag tar bort key={props.key} får jag ingen varning i consolen längre
 
 function MessageComponent(props) {
   // Only admin users can delete messages
@@ -9,13 +9,22 @@ function MessageComponent(props) {
   };
   let messageDelete;
   if (props.user === ("Vicente Tirado" || "Alan Habib" || "Igor Semiz")) {
-    messageDelete = <button>Delete this Message</button>;
+    messageDelete = (
+      <button
+        onClick={() => {
+          // props.deleteMessage(props.key);
+        }}
+      >
+        Delete this Message
+      </button>
+    );
   } else {
     messageDelete = <button style={none}>Nothing</button>;
   }
+
   return (
     <div>
-      <p key={props.key}>{props.getSender}</p>
+      <p>{props.getSender}</p>
       <p>{props.textvalue}</p>
       <p>{props.timestamp}</p>
       {messageDelete}
