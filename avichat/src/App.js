@@ -6,7 +6,7 @@ import ChatAppComponent from "./components/ChatAppComponent";
 
 class App extends Component {
   state = {
-    // username: "",
+    user: "",
     currentScreen: "LoginScreen",
     btnName: "Google Log in"
   };
@@ -15,11 +15,12 @@ class App extends Component {
     this.auth();
   }
 
-  // Listening if anyone logs in. Saves the logged in user in state
+  // Listening if anyone logs in
   auth = () => {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.setState({
+          user: user.displayName,
           currentScreen: "AVIchat",
           btnName: "Log out"
         });
@@ -46,7 +47,11 @@ class App extends Component {
     // There is a logged in user = TRUE
     if (this.state.currentScreen === "AVIchat") {
       return (
-        <ChatAppComponent btnName={this.state.btnName} logOut={this.logOut} />
+        <ChatAppComponent
+          btnName={this.state.btnName}
+          logOut={this.logOut}
+          user={this.state.user}
+        />
       );
     }
     // There is a logged in user = FALSE

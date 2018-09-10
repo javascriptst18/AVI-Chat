@@ -13,7 +13,6 @@ function MessageComponent(props) {
       <button
         onClick={() => {
           props.deleteMessage(props.keyDelete);
-          console.log(props.keyDelete);
         }}
       >
         Delete this Message

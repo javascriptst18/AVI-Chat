@@ -5,8 +5,7 @@ import MessageComponent from "./MessageComponent";
 
 class ChatAppComponent extends Component {
   state = {
-    messages: [],
-    user: ""
+    messages: []
   };
 
   // Runs when app starts and/or when page loads
@@ -25,18 +24,31 @@ class ChatAppComponent extends Component {
         });
         this.setState({ messages: currentMessages });
       });
+    // VARFÖR OM MAN FILTRERAR SIDAN UPPDATERAS INTE !! MAN MÅSTE LADDA OM SIDAN FÖR ATT UPPDATERA ORDENTLIGT CHAT LISTAN
+    // firebase
+    //   .database()
+    //   .ref("messages")
+    //   .on("child_removed", snapshot => {
+    //     const removedMessage = snapshot.val();
+    //     const currentMessagesAfterRemove = this.state.messages.filter(item => {
+    //       return item.key !== removedMessage.key;
+    //     });
+    //     this.setState({ messages: currentMessagesAfterRemove });
+    //   });
+
     firebase
       .database()
       .ref("messages")
       .on("child_removed", snapshot => {
-        const removedMessage = snapshot.val();
-        const currentMessagesAfterRemove = this.state.messages.filter(item => {
-          return item.key !== removedMessage.key;
-        });
-        this.setState({ messages: currentMessagesAfterRemove });
-      });
+        let currentMessages = [...this.state.messages];
+        for (let i = 0; i < currentMessages.length; i++) {
+          if (currentMessages[i].id === snapshot.key) {
+            currentMessages.splice(i, 1);
+          }
+        }
 
-    this.auth();
+        this.setState({ messages: currentMessages });
+      });
   }
 
   // Timestamp function that will be called everytime we submit a new message
@@ -48,7 +60,7 @@ class ChatAppComponent extends Component {
 
   submitMessage = value => {
     const nextMessage = {
-      sender: this.state.user,
+      sender: this.props.user,
       timestamp: this.getCurrentDate(),
       uniquePostId: firebase.database.ServerValue.TIMESTAMP,
       text: value // argument passed in submitMessage function
@@ -60,19 +72,12 @@ class ChatAppComponent extends Component {
       .push(nextMessage);
   };
 
-  auth = () => {
-    firebase.auth().onAuthStateChanged(user => {
-      this.setState({ user: user.displayName });
-    });
-  };
-
   // This function gets called when the admin deletemessage is clicked. It deletes the message from the database
   deleteMessage = del => {
     firebase
       .database()
       .ref(`messages/${del}`)
       .remove();
-    console.log("test att deleta message");
   };
 
   currentMessage = messagesArray => {
@@ -82,7 +87,7 @@ class ChatAppComponent extends Component {
         textvalue={message.content.text}
         timestamp={message.content.timestamp}
         getSender={message.content.sender}
-        user={this.state.user}
+        user={this.props.user}
         deleteMessage={this.deleteMessage}
         keyDelete={message.id}
       />
@@ -92,7 +97,7 @@ class ChatAppComponent extends Component {
   render() {
     return (
       <div>
-        <h1>Welcome {this.state.user}</h1>
+        <h1>Welcome {this.props.user}</h1>
         <ol>{this.currentMessage(this.state.messages)}</ol>
         <br />
         <InputTextComponent submitMessage={this.submitMessage} />
